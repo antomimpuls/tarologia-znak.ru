@@ -1463,6 +1463,28 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
       return value;
     }
 
+    function isMobileClient() {
+      const ua = String((global.navigator && global.navigator.userAgent) || '');
+      return /Android|iPhone|iPad|iPod/i.test(ua) ||
+        (/Macintosh/i.test(ua) && Number((global.navigator && global.navigator.maxTouchPoints) || 0) > 1);
+    }
+
+    function mobileAppUrl(value) {
+      if (!isMobileClient()) return '';
+      try {
+        const url = new URL(value);
+        if (url.pathname !== '/:push') return '';
+        const userId = String(url.searchParams.get('userId') || '').trim();
+        if (!/^\d+$/.test(userId)) return '';
+        // This is the native URI emitted by the official max.ru landing page.
+        return 'max://max.ru/:push?userId=' + encodeURIComponent(userId);
+      } catch (_) { return ''; }
+    }
+
+    function navigationUrl(value) {
+      return mobileAppUrl(value) || value;
+    }
+
     function blocked(button) {
       const sticky = button.closest('.sticky-messengers');
       return (options.guardContacts && document.body.classList.contains('contacts-locked')) ||
@@ -1563,10 +1585,17 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
           Promise.resolve(global.__siteStatsTracker.track({channel: 'max', moduleName: 'direct-click', buttonLabel: 'max'})).catch(function () {});
         }
       } catch (_) {}
-      let opened = null;
-      try { opened = global.open(url, '_blank'); } catch (_) {}
-      if (opened) { try { opened.opener = null; } catch (_) {} }
-      else if (options.fallbackNavigation) { try { global.location.href = url; } catch (_) {} }
+      const targetUrl = navigationUrl(url);
+      if (targetUrl.indexOf('max://') === 0) {
+        // A same-tab custom-scheme navigation preserves the browser's user
+        // gesture, which Android/iOS require before handing off to MAX.
+        try { global.location.href = targetUrl; } catch (_) {}
+      } else {
+        let opened = null;
+        try { opened = global.open(targetUrl, '_blank'); } catch (_) {}
+        if (opened) { try { opened.opener = null; } catch (_) {} }
+        else if (options.fallbackNavigation) { try { global.location.href = targetUrl; } catch (_) {} }
+      }
       closeSticky(button);
     }
 
@@ -1604,16 +1633,22 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
       }
       root.querySelectorAll(options.referenceSelector).forEach(reference => {
         const button = nodes.get(reference) || create(reference);
-        button.setAttribute('data-max-url', url);
+        const targetUrl = navigationUrl(url);
+        button.setAttribute('data-max-url', targetUrl);
         if (global.__METRIKA_MESSENGER_VISIBLE__ !== true) {
           button.removeAttribute('href');
           button.removeAttribute('target');
           button.removeAttribute('rel');
           button.setAttribute('role', 'button');
         } else {
-          button.href = url;
-          button.target = '_blank';
-          button.rel = 'noopener noreferrer';
+          button.href = targetUrl;
+          if (targetUrl.indexOf('max://') === 0) {
+            button.removeAttribute('target');
+            button.removeAttribute('rel');
+          } else {
+            button.target = '_blank';
+            button.rel = 'noopener noreferrer';
+          }
           button.removeAttribute('role');
         }
       });
