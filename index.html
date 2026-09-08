@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script>
 const SITE_SETTINGS = {
-  'phoneNumber': '+79882545168',
-  'psychicName': 'Мария Николаевна',
+  'phoneNumber': '+79185035434',
+  'psychicName': 'Елена',
   'city': 'Москва',
   'address': 'г. Москва, наб. Пречистенская, д. 37, офис 12',
   'enableRedirect': false,
@@ -21,14 +21,14 @@ const SITE_SETTINGS = {
   'siteUrl': 'https://tarologia-znak.ru/',
   'whatsappMessage': 'Здравствуйте, хочу обратиться к вам за помощью.',
   'telegramEnabled': 1,
-  'telegramNickname': 'Mariaa199',
+  'telegramNickname': 'Elenamag2021',
   'yandexMetrikaId': '112334833',
   'psychicImageURL': 'https://raw.githubusercontent.com/antomimpuls/tarologia-znak.ru/main/Ms7rm4GGiJnKWnigXhf0gAS1zdUS7gnrVCJNXge2_45CIpvWK8Lm2QoCiSnJM9YhJ3mO8rl9LZ5FalkmqEICncKl.jpg',
   'workingHours': 'ежедневно 09:00-23:00',
   'responseTime': '7-20 минут',
   'metrikaMessengerVisible': false
 };
-const PSYCHIC_NAME=SITE_SETTINGS.psychicName||'Мария Николаевна';
+const PSYCHIC_NAME=SITE_SETTINGS.psychicName||'Елена';
 const PHONE_DIGITS=(SITE_SETTINGS.phoneNumber||'').replace(/\D/g,'');
 const WHATSAPP_MESSAGE=PSYCHIC_NAME ? `Здравствуйте, ${PSYCHIC_NAME}! хочу обратиться к вам за помощью.` : 'Здравствуйте, хочу обратиться к вам за помощью';
 const TELEGRAM_MESSAGE=WHATSAPP_MESSAGE;
@@ -855,7 +855,7 @@ footer{background:#05050a;padding:40px 0;text-align:center;border-top:1px solid 
 <span class="modal-close" onclick="closePrivacyModal()">&times;</span>
 <h1>🧾 Политика конфиденциальности</h1>
 <div class="company-info">
-<p><strong>ИП Мария Николаевна</strong></p>
+<p><strong>ИП Елена</strong></p>
 <p>ОГРНИП: 323165800839512</p>
 <p>ИНН: 772614589930</p>
 <p>Адрес: 119034, г. Москва, Пречистенская наб., д. 37, офис 12</p>
@@ -1111,7 +1111,7 @@ function setupReveal(){
 }
 
 function setImagesAndTexts(){
-    const psychicName = SETTINGS.psychicName || 'Мария Николаевна';
+    const psychicName = SETTINGS.psychicName || 'Елена';
     const heroName = document.getElementById('heroName');
     if (heroName) {
         const titleEl = heroName.querySelector('.psychic-name-title');
