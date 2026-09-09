@@ -1476,8 +1476,9 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
         if (url.pathname !== '/:push') return '';
         const userId = String(url.searchParams.get('userId') || '').trim();
         if (!/^\d+$/.test(userId)) return '';
-        // This is the native URI emitted by the official max.ru landing page.
-        return 'max://max.ru/:push?userId=' + encodeURIComponent(userId);
+        // Native MAX resolves the contact identifier through the uid parameter.
+        // The web client uses userId, so keep the stored URL for desktop.
+        return 'https://max.ru/:push?uid=' + encodeURIComponent(userId);
       } catch (_) { return ''; }
     }
 
@@ -1586,9 +1587,9 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
         }
       } catch (_) {}
       const targetUrl = navigationUrl(url);
-      if (targetUrl.indexOf('max://') === 0) {
-        // A same-tab custom-scheme navigation preserves the browser's user
-        // gesture, which Android/iOS require before handing off to MAX.
+      if (isMobileClient() && targetUrl.indexOf('https://max.ru/') === 0) {
+        // Same-tab navigation preserves the user gesture required for the
+        // operating system to hand an HTTPS app link to MAX.
         try { global.location.href = targetUrl; } catch (_) {}
       } else {
         let opened = null;
@@ -1642,7 +1643,7 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
           button.setAttribute('role', 'button');
         } else {
           button.href = targetUrl;
-          if (targetUrl.indexOf('max://') === 0) {
+          if (isMobileClient() && targetUrl.indexOf('https://max.ru/') === 0) {
             button.removeAttribute('target');
             button.removeAttribute('rel');
           } else {
