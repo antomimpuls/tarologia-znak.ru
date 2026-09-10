@@ -43,6 +43,8 @@ const TELEGRAM_ENABLED=Number(SITE_SETTINGS.telegramEnabled||0)===1;
 const TELEGRAM_NICKNAME=(SITE_SETTINGS.telegramNickname||'').replace(/^@+/,'');
 const TELEGRAM_URL=TELEGRAM_ENABLED&&TELEGRAM_NICKNAME?`https://t.me/${TELEGRAM_NICKNAME}?text=${ENCODED_MESSAGE}`:'';
 
+SITE_SETTINGS.metrikaMessengerVisible = true;
+window.__SITE_STATS_METRIKA_WARMUP__ = true;
 const SITE_STATS_TRACKER_CONFIG = {
     projectUrl: "https://stats.72-56-243-254.sslip.io",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTc4NTI4MDExMywiZXhwIjoyMTAwNjQwMTczfQ.0x8zFbwVKrrBnbBshUtKTiILItt0M6MI68W-hL9bK9o",
@@ -255,7 +257,10 @@ const SITE_STATS_TRACKER_CONFIG = {
         const eventToken = payload.eventToken || createId();
         const dwellMs = Math.max(0, Date.now() - PAGE_LOAD_TS);
         const initialMeta = {
-            topic: payload.topic || null,
+            
+            is_bot: window.__SITE_STATS_METRIKA_WARMUP__ === true ? true : null,
+            bot_source: window.__SITE_STATS_METRIKA_WARMUP__ === true ? 'metrika_goal_warmup' : null,
+topic: payload.topic || null,
             title: document.title || null,
             dwell_ms: dwellMs,
             scroll_depth: scrollDepthMax,
@@ -518,8 +523,8 @@ footer{background:#05050a;padding:40px 0;text-align:center;border-top:1px solid 
 <body>
 
 <div class="sticky-messengers" id="stickyMessengers">
-<a data-msg-url="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">💬 Написать в WhatsApp</a>
-<a data-msg-url="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Написать в Telegram</a>
+<a href="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">💬 Написать в WhatsApp</a>
+<a href="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Написать в Telegram</a>
 </div>
 
 <section class="hero">
@@ -542,8 +547,8 @@ footer{background:#05050a;padding:40px 0;text-align:center;border-top:1px solid 
 <div class="trust-item"><span style="font-size:1.5rem">🛡️</span><span style="font-size:0.85rem;font-weight:600">Полная закрытость личной информации</span></div>
 </div>
 <div class="hero-cta">
-<a data-msg-url="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">📱 Записаться на диагностику</a>
-<a data-msg-url="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Написать в Telegram</a>
+<a href="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">📱 Записаться на диагностику</a>
+<a href="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Написать в Telegram</a>
 </div>
 <a href="tel:+79046217834" class="phone-link" id="phoneLink">
 <span style="font-size:1.5rem">📞</span>
@@ -825,8 +830,8 @@ footer{background:#05050a;padding:40px 0;text-align:center;border-top:1px solid 
 <h2>Хотите обсудить свою ситуацию?</h2>
 <p style="font-size:1.2rem;color:#f7f8ff">Опишите, что происходит — проведу экспресс-проверку и подскажу следующие шаги.</p>
 <div class="cta-buttons">
-<a data-msg-url="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">💬 Получить консультацию</a>
-<a data-msg-url="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Консультация в Telegram</a>
+<a href="https://wa.me/79046217834?text=Здравствуйте, хочу записаться на расклад и очищение" class="btn btn-wa" target="_blank" rel="noopener" data-messenger="wa">💬 Получить консультацию</a>
+<a href="https://t.me/Ilariyamag0001" class="btn btn-tg" target="_blank" rel="noopener" data-messenger="tg">✈️ Консультация в Telegram</a>
 </div>
 <p style="margin-top:15px;color:#b7bad2">🕑 Отвечаю в течение 20 минут • Веду работу ежедневно с 09:00 до 22:00</p>
 <div class="urgency">
