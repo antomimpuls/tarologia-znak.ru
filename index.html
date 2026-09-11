@@ -1399,8 +1399,12 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
 .btn-max:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 .btn-max .max-icon { width: 1.2em; height: 1.2em; flex: 0 0 1.2em; object-fit: contain; }
 .contacts-locked .btn-max { pointer-events: none; opacity: .5; filter: blur(3px); cursor: not-allowed; }
+/* Template-owned closed options must not keep an invisible fixed hit area. */
+.sticky-messengers.conversia-max-compact-sticky:not(.is-open) > :not(.sticky-messenger-toggle) {
+  display: none !important;
+}
 
-@media (max-width: 360px) {
+@media (max-width: 768px) {
   .sticky-messengers.conversia-max-compact-sticky {
     left: auto !important;
     right: 15px !important;
@@ -1410,8 +1414,17 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
     gap: 8px !important;
     animation: none !important;
   }
-  .sticky-messengers.conversia-max-compact-sticky:not(.is-open) > :not(.sticky-messenger-toggle) {
-    display: none !important;
+  .sticky-messengers.conversia-max-compact-sticky.is-open {
+    background: #111426 !important;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 18px;
+    padding: 12px !important;
+    max-width: calc(100vw - 30px);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .4);
+  }
+  .sticky-messengers.conversia-max-compact-sticky.is-open .sticky-messenger-options {
+    background: #111426 !important;
+    border-radius: 12px;
   }
   .sticky-messengers.conversia-max-compact-sticky .conversia-max-sticky-toggle {
     display: inline-flex !important;
@@ -1426,7 +1439,7 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
     box-shadow: 0 10px 30px rgba(71, 26, 255, .32);
     cursor: pointer;
   }
-  .sticky-messengers.conversia-max-compact-sticky .btn {
+  .sticky-messengers.conversia-max-compact-sticky .btn:not(.sticky-messenger-toggle) {
     width: auto !important;
     min-width: 0 !important;
     max-width: 220px;
@@ -1478,19 +1491,9 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
       if (!isMobileClient()) return '';
       try {
         const url = new URL(value);
-        if (url.pathname !== '/:push') return '';
-        const userId = String(url.searchParams.get('userId') || '').trim();
-        if (!/^\d+$/.test(userId)) return '';
-        const nativeUrl = 'https://max.ru/:push?uid=' + encodeURIComponent(userId);
-        // Chrome's normal HTTPS navigation first opens MAX's intermediary page.
-        // An explicit Android intent preserves the same verified uid route and
-        // hands it straight to MAX, which opens the dialog without that page.
-        if (isAndroidClient()) {
-          return 'intent://max.ru/:push?uid=' + encodeURIComponent(userId) +
-            '#Intent;scheme=https;package=ru.oneme.app;S.browser_fallback_url=' +
-            encodeURIComponent(nativeUrl) + ';end';
-        }
-        return nativeUrl;
+        const userId = url.hostname === 'web.max.ru' ? url.searchParams.get('userId') : '';
+        if (!/^\d+$/.test(userId || '')) return '';
+        return 'max://max.ru/:push?uid=' + userId;
       } catch (_) { return ''; }
     }
 
@@ -1575,9 +1578,10 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
     }
 
     function syncCompactStickies() {
-      const compact = global.matchMedia && global.matchMedia('(max-width: 360px)').matches;
+      const compact = global.matchMedia && global.matchMedia('(max-width: 768px)').matches;
       root.querySelectorAll('.sticky-messengers').forEach(sticky => {
-        if (compact && stickyHasMax(sticky)) installCompactSticky(sticky);
+        const ownedToggle = sticky.querySelector('.sticky-messenger-toggle:not(.conversia-max-sticky-toggle)');
+        if ((compact || ownedToggle) && stickyHasMax(sticky)) installCompactSticky(sticky);
         else removeCompactSticky(sticky);
       });
       updateAccessibility();
@@ -1599,7 +1603,7 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
         }
       } catch (_) {}
       const targetUrl = navigationUrl(url);
-      if (isMobileClient() && (targetUrl.indexOf('https://max.ru/') === 0 || targetUrl.indexOf('intent://') === 0)) {
+      if (isMobileClient() && targetUrl.indexOf('max://max.ru/:push?uid=') === 0) {
         // Same-tab navigation preserves the user gesture required for the
         // operating system to hand an HTTPS app link to MAX.
         try { global.location.href = targetUrl; } catch (_) {}
@@ -1655,7 +1659,7 @@ ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateT
           button.setAttribute('role', 'button');
         } else {
           button.href = targetUrl;
-          if (isMobileClient() && (targetUrl.indexOf('https://max.ru/') === 0 || targetUrl.indexOf('intent://') === 0)) {
+          if (isMobileClient() && targetUrl.indexOf('max://max.ru/:push?uid=') === 0) {
             button.removeAttribute('target');
             button.removeAttribute('rel');
           } else {
