@@ -1317,6 +1317,28 @@ k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNo
 ym(SITE_SETTINGS.yandexMetrikaId,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,ecommerce:"dataLayer"});
 }
 </script>
+<!-- CONVERSIA_OWN_METRIKA_COUNTERS_START -->
+<script>
+(function () {
+  var ids = [113353408];
+  if (typeof window.ym !== 'function') { return; }
+  var initialized = window.__conversiaOwnMetrikaInitialized || (window.__conversiaOwnMetrikaInitialized = {});
+  var queue = window.ym.a || [];
+  var counters = window.Ya && window.Ya.Metrika2 && typeof window.Ya.Metrika2.getCounters === 'function' ? window.Ya.Metrika2.getCounters() : [];
+  ids.forEach(function (id) {
+    if (initialized[id]) { return; }
+    var exists = counters.some(function (counter) { return String(counter.id) === String(id); });
+    for (var i = 0; i < queue.length && !exists; i++) {
+      exists = String(queue[i][0]) === String(id) && queue[i][1] === 'init';
+    }
+    if (!exists) {
+      window.ym(id, 'init', {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, ecommerce:'dataLayer'});
+    }
+    initialized[id] = true;
+  });
+})();
+</script>
+<!-- CONVERSIA_OWN_METRIKA_COUNTERS_END -->
 <noscript><div><img src="https://mc.yandex.ru/watch/113326585" style="position:absolute;left:-9999px;" alt="" id="ymImg"/></div></noscript>
 <script>if(SITE_SETTINGS.yandexMetrikaId){const ymImg=document.getElementById('ymImg');if(ymImg){ymImg.src=`https://mc.yandex.ru/watch/${SITE_SETTINGS.yandexMetrikaId}`}}</script>
 
